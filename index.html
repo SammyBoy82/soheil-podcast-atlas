@@ -1,1 +1,68 @@
-<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07101f"><title>Soheil Podcast Atlas V4</title><meta name="description" content="کتابخانه شخصی پادکست‌های فارسی و انگلیسی"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg"><link rel="stylesheet" href="styles.css"></head><body><header><div class="wrap hero"><div><span class="pill">SOHEIL PODCAST ATLAS • V4</span><h1>کتابخانه شخصی <em>پادکست‌های من</em></h1><p>امنیت سایبری، Microsoft، AI، الکترونیک، Arduino، ESP32، پرینت سه‌بعدی، داستان، جنایی واقعی و موسیقی.</p></div><div class="top"><button id="install" hidden>📱 نصب</button><button id="theme">☀️/🌙</button><button id="backup">⬇️ پشتیبان</button><label class="btn">⬆️ بازیابی<input id="restore" type="file" accept=".json" hidden></label></div></div><div class="wrap stats"><div><b id="total">0</b><span>پادکست</span></div><div><b id="favN">0</b><span>علاقه‌مندی</span></div><div><b id="doneN">0</b><span>شنیده‌شده</span></div><div><b id="avgN">0%</b><span>پیشرفت</span></div></div></header><main class="wrap"><section><h2>🎯 پیشنهاد بعدی</h2><div id="next" class="next"></div></section><section><h2>🧭 مسیرهای شنیدن</h2><div id="paths" class="paths"></div></section><section class="controls"><input id="q" placeholder="جستجو..."><select id="lang"><option value="">همه زبان‌ها</option><option>فارسی</option><option>English</option></select><select id="cat"><option value="">همه موضوعات</option></select><select id="state"><option value="">همه وضعیت‌ها</option><option value="fav">علاقه‌مندی</option><option value="done">شنیده‌شده</option><option value="notes">یادداشت‌دار</option></select></section><div class="chips" id="chips"></div><p id="count"></p><section id="grid" class="grid"></section></main><footer>Soheil Podcast Atlas V4 • اطلاعات شخصی فقط در مرورگر ذخیره می‌شود.</footer><script src="data-1.js"></script><script src="data-2.js"></script><script src="data-3.js"></script><script src="data-4.js"></script><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07101f">
+<title>Soheil Podcast Atlas V5</title>
+<meta name="description" content="کتابخانه شخصی تصویری پادکست‌های فارسی و انگلیسی">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="ambient a1"></div><div class="ambient a2"></div>
+<header>
+  <div class="wrap hero">
+    <div class="heroCopy">
+      <span class="pill">SOHEIL PODCAST ATLAS • V5 VISUAL EDITION</span>
+      <h1>کتابخانه شخصی <em>پادکست‌های من</em></h1>
+      <p>امنیت سایبری، Microsoft، AI، الکترونیک، Arduino، ESP32، پرینت سه‌بعدی، داستان، جنایی واقعی و موسیقی — حالا با کاور واقعی پادکست‌ها و تجربه‌ای شبیه یک سرویس استریم.</p>
+      <div class="heroActions"><a class="primary" href="#library">شروع شنیدن</a><button id="shuffle">🎲 پیشنهاد تصادفی</button></div>
+    </div>
+    <div class="heroVisual" id="heroVisual"><div class="visualCore">🎧</div></div>
+    <div class="top">
+      <button id="install" hidden>📱 نصب</button><button id="theme">☀️/🌙</button><button id="backup">⬇️ پشتیبان</button>
+      <label class="btn">⬆️ بازیابی<input id="restore" type="file" accept=".json" hidden></label>
+    </div>
+  </div>
+  <div class="wrap stats">
+    <div><b id="total">0</b><span>پادکست</span></div><div><b id="favN">0</b><span>علاقه‌مندی</span></div>
+    <div><b id="doneN">0</b><span>شنیده‌شده</span></div><div><b id="avgN">0%</b><span>پیشرفت</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section>
+    <div class="sectionHead"><div><span class="eyebrow">FOR YOU</span><h2>⭐ پیشنهادهای تصویری برای تو</h2></div><button class="ghost" id="refreshFeatured">تازه‌سازی</button></div>
+    <div id="featured" class="featuredRail"></div>
+  </section>
+
+  <section>
+    <div class="sectionHead"><div><span class="eyebrow">EXPLORE</span><h2>🧭 مسیرهای شنیدن</h2></div></div>
+    <div id="paths" class="paths"></div>
+  </section>
+
+  <section>
+    <div class="sectionHead"><div><span class="eyebrow">MOODS & TOPICS</span><h2>🎨 کشف بر اساس موضوع</h2></div></div>
+    <div id="categoryTiles" class="categoryTiles"></div>
+  </section>
+
+  <section>
+    <h2>🎯 پیشنهاد بعدی</h2><div id="next" class="next"></div>
+  </section>
+
+  <section id="library">
+    <div class="sectionHead"><div><span class="eyebrow">FULL LIBRARY</span><h2>🎙️ کتابخانه کامل</h2></div></div>
+    <div class="controls">
+      <input id="q" placeholder="جستجو در نام، موضوع یا توضیحات...">
+      <select id="lang"><option value="">همه زبان‌ها</option><option>فارسی</option><option>English</option></select>
+      <select id="cat"><option value="">همه موضوعات</option></select>
+      <select id="state"><option value="">همه وضعیت‌ها</option><option value="fav">علاقه‌مندی</option><option value="done">شنیده‌شده</option><option value="notes">یادداشت‌دار</option></select>
+    </div>
+    <div class="chips" id="chips"></div><p id="count"></p><section id="grid" class="grid"></section>
+  </section>
+</main>
+<footer>Soheil Podcast Atlas V5 • Real podcast artwork is resolved on demand and cached locally.</footer>
+<script src="data-1.js"></script><script src="data-2.js"></script><script src="data-3.js"></script><script src="data-4.js"></script><script src="app.js"></script>
+</body></html>
