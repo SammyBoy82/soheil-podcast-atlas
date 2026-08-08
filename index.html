@@ -4,26 +4,43 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#07101f">
-<title>Soheil Podcast Atlas V7</title>
-<meta name="description" content="کتابخانه شخصی تصویری پادکست‌های فارسی و انگلیسی با کاور و توضیحات منبع">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon.svg">
-<link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="v6-theme.css">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Soheil Podcast Atlas V10.1</title>
+<meta name="description" content="کتابخانه شخصی تصویری پادکست‌های فارسی و انگلیسی با کاور محلی و توضیحات منبع">
+<link rel="manifest" href="manifest.webmanifest?v=10.1">
+<link rel="icon" href="icon.svg?v=10.1">
+<link rel="stylesheet" href="styles.css?v=10.1">
+<link rel="stylesheet" href="v6-theme.css?v=10.1">
+<script>
+(async()=>{
+  try{
+    if('serviceWorker' in navigator){
+      const regs=await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister()));
+    }
+    if('caches' in window){
+      const keys=await caches.keys();
+      await Promise.all(keys.map(k=>caches.delete(k)));
+    }
+  }catch(e){}
+})();
+</script>
 </head>
 <body>
 <div class="ambient a1"></div><div class="ambient a2"></div>
 <header>
   <div class="wrap hero">
     <div class="heroCopy">
-      <span class="pill">SOHEIL PODCAST ATLAS • V7 SOURCE EDITION</span>
+      <span class="pill">SOHEIL PODCAST ATLAS • V10.1 CLEAN BUILD</span>
       <h1>کتابخانه شخصی <em>پادکست‌های من</em></h1>
-      <p>امنیت سایبری، Microsoft، AI، الکترونیک، Arduino، ESP32، پرینت سه‌بعدی، داستان، جنایی واقعی و موسیقی — با کاور واقعی و توضیحات کانال از منبع اصلی.</p>
+      <p>نسخه ۱۰.۱ با بارگذاری مستقیم کاورهای محلی، بدون Service Worker cache و بدون resolver مرورگر. توضیحات کانال همچنان از منبع اصلی نمایش داده می‌شود.</p>
       <div class="heroActions"><a class="primary" href="#library">شروع شنیدن</a><button id="shuffle">🎲 پیشنهاد تصادفی</button></div>
     </div>
     <div class="heroVisual" id="heroVisual"><div class="visualCore">🎧</div></div>
     <div class="top">
-      <button id="install" hidden>📱 نصب</button><button id="theme">☀️/🌙</button><button id="backup">⬇️ پشتیبان</button>
+      <button id="theme">☀️/🌙</button><button id="backup">⬇️ پشتیبان</button>
       <label class="btn">⬆️ بازیابی<input id="restore" type="file" accept=".json" hidden></label>
     </div>
   </div>
@@ -43,6 +60,6 @@
     <div class="chips" id="chips"></div><p id="count"></p><section id="grid" class="grid"></section>
   </section>
 </main>
-<footer>Soheil Podcast Atlas V7 • Multi-source artwork • Publisher/channel descriptions.</footer>
-<script src="data-1.js"></script><script src="data-2.js"></script><script src="data-3.js"></script><script src="data-4.js"></script><script src="source-metadata.js"></script><script src="app.js"></script>
+<footer>Soheil Podcast Atlas V10.1 • Clean local artwork build • No browser cache layer.</footer>
+<script src="data-1.js?v=10.1"></script><script src="data-2.js?v=10.1"></script><script src="data-3.js?v=10.1"></script><script src="data-4.js?v=10.1"></script><script src="source-metadata.js?v=10.1"></script><script src="app.js?v=10.1"></script>
 </body></html>
