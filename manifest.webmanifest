@@ -1,10 +1,10 @@
 {
-  "name": "Soheil Podcast Atlas V6",
+  "name": "Soheil Podcast Atlas V10.1",
   "short_name": "Podcast Atlas",
-  "start_url": "./",
+  "start_url": "./?v=10.1",
   "display": "standalone",
   "background_color": "#07101f",
   "theme_color": "#07101f",
-  "description": "Personal bilingual visual podcast library with live artwork, language themes, progress, favorites and notes.",
-  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+  "description": "Personal bilingual visual podcast library with locally hosted artwork, source descriptions, progress, favorites and notes.",
+  "icons": [{"src":"icon.svg?v=10.1","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
 }
