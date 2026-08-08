@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, re, html, mimetypes
+import json, re, html
 from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.parse import quote, urljoin
@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 ROOT = Path(__file__).resolve().parents[1]
 COVERS = ROOT / 'covers'
 COVERS.mkdir(exist_ok=True)
-UA = 'Mozilla/5.0 (compatible; SoheilPodcastAtlas/8.0; +https://github.com/SammyBoy82/soheil-podcast-atlas)'
+UA = 'Mozilla/5.0 (compatible; SoheilPodcastAtlas/8.1; +https://github.com/SammyBoy82/soheil-podcast-atlas)'
 
 
 def request(url, timeout=18, referer=''):
@@ -20,8 +20,7 @@ def request(url, timeout=18, referer=''):
     }
     if referer:
         headers['Referer'] = referer
-    req = Request(url, headers=headers)
-    return urlopen(req, timeout=timeout)
+    return urlopen(Request(url, headers=headers), timeout=timeout)
 
 
 def get(url, timeout=18, referer=''):
@@ -60,12 +59,11 @@ def load_podcasts():
     for path in sorted(ROOT.glob('data-*.js')):
         txt = path.read_text(encoding='utf-8')
         a, b = txt.find('['), txt.rfind(']')
-        if a < 0 or b < a:
-            continue
-        try:
-            items.extend(json.loads(txt[a:b + 1]))
-        except Exception as e:
-            print('parse', path.name, e)
+        if a >= 0 and b >= a:
+            try:
+                items.extend(json.loads(txt[a:b + 1]))
+            except Exception as e:
+                print('parse', path.name, e)
     return items
 
 
@@ -89,13 +87,11 @@ def page_meta(url):
         desc = clean_text(meta_value(text, 'og:description') or meta_value(text, 'description'))
         if image:
             image = urljoin(final_url, image)
-        # JSON-LD fallback: many podcast directories expose image/description here.
         if not image or not desc:
             for block in re.findall(r'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>', text, re.I | re.S):
                 try:
                     obj = json.loads(html.unescape(block).strip())
-                    objs = obj if isinstance(obj, list) else [obj]
-                    for x in objs:
+                    for x in (obj if isinstance(obj, list) else [obj]):
                         if not isinstance(x, dict):
                             continue
                         if not image:
@@ -126,10 +122,11 @@ def apple_search(title, country):
             if s > bestscore:
                 bestscore, best = s, r
         if best and bestscore >= .22:
-            art = best.get('artworkUrl600') or best.get('artworkUrl100') or best.get('artworkUrl60') or ''
-            art = re.sub(r'/\d+x\d+bb', '/1200x1200bb', art)
+            original = best.get('artworkUrl600') or best.get('artworkUrl100') or best.get('artworkUrl60') or ''
+            high = re.sub(r'/\d+x\d+bb', '/1200x1200bb', original)
             return {
-                'image': art,
+                'image': high,
+                'imageOriginal': original,
                 'feedUrl': best.get('feedUrl', ''),
                 'appleUrl': best.get('collectionViewUrl', ''),
                 'matched': best.get('collectionName', ''),
@@ -182,17 +179,18 @@ def image_type(data, content_type=''):
         return 'gif'
     if b'<svg' in data[:800].lower():
         return 'svg'
-    return {'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/svg+xml': 'svg'}.get(ct, '')
+    return {
+        'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp',
+        'image/gif': 'gif', 'image/svg+xml': 'svg', 'image/avif': 'avif'
+    }.get(ct, '')
 
 
 def save_cover(pid, candidates):
-    # Remove a stale cover generated during this build, if any.
     for old in COVERS.glob(f'{pid}.*'):
         try:
             old.unlink()
         except Exception:
             pass
-
     seen = set()
     for source_name, url, referer in candidates:
         if not url:
@@ -210,12 +208,7 @@ def save_cover(pid, candidates):
                 continue
             path = COVERS / f'{pid}.{ext}'
             path.write_bytes(data)
-            return {
-                'localImage': f'covers/{path.name}',
-                'originalImage': final_url,
-                'imageSource': source_name,
-                'bytes': len(data),
-            }
+            return {'localImage': f'covers/{path.name}', 'originalImage': final_url, 'imageSource': source_name, 'bytes': len(data)}
         except Exception as e:
             print(f'  cover fail {pid} {source_name}: {str(e)[:100]}')
     return {}
@@ -223,11 +216,7 @@ def save_cover(pid, candidates):
 
 def resolve(p):
     pid, title = p.get('id'), p.get('title', '')
-    out = {'title': title, 'sourcePage': p.get('url', '')}
-
     pm = page_meta(p.get('url', '')) if p.get('url', '').startswith('http') else {}
-
-    # Search several storefronts because catalog availability differs by country.
     apples = []
     for country in ('au', 'us', 'gb', 'ca'):
         a = apple_search(title, country)
@@ -240,21 +229,23 @@ def resolve(p):
     source_name = 'Publisher RSS' if rm.get('description') else ('Podcast App' if pm.get('description') else ('Apple Podcasts' if ap else 'Atlas'))
     source_url = rm.get('sourceUrl') or pm.get('pageUrl') or p.get('url', '') or ap.get('appleUrl', '')
 
-    # Candidate order deliberately tries publisher RSS first, then directory metadata,
-    # then multiple Apple artwork endpoints. Every successful image is copied locally.
     candidates = []
     if rm.get('image'):
         candidates.append(('Publisher RSS', rm['image'], rm.get('sourceUrl', '')))
     if pm.get('image'):
         candidates.append(('Podcast App', pm['image'], pm.get('pageUrl', p.get('url', ''))))
     for a in sorted(apples, key=lambda x: x.get('score', 0), reverse=True):
+        label = f"Apple Podcasts {a.get('country', '').upper()}"
         if a.get('image'):
-            candidates.append((f"Apple Podcasts {a.get('country', '').upper()}", a['image'], a.get('appleUrl', '')))
+            candidates.append((label + ' HD', a['image'], a.get('appleUrl', '')))
+        if a.get('imageOriginal'):
+            candidates.append((label + ' original', a['imageOriginal'], a.get('appleUrl', '')))
 
     cover = save_cover(pid, candidates)
     image = cover.get('localImage', '')
-
-    out.update({
+    out = {
+        'title': title,
+        'sourcePage': p.get('url', ''),
         'image': image,
         'originalImage': cover.get('originalImage', ''),
         'imageSource': cover.get('imageSource', ''),
@@ -264,7 +255,7 @@ def resolve(p):
         'appleUrl': ap.get('appleUrl', '') if ap else '',
         'feedUrl': ap.get('feedUrl', '') if ap else '',
         'matched': ap.get('matched', '') if ap else '',
-    })
+    }
     print(f"{pid} {title[:40]} -> desc={source_name} local-cover={'yes' if image else 'NO'} via={cover.get('imageSource','-')}")
     return pid, out
 
@@ -280,9 +271,8 @@ def main():
                 meta[k] = v
             except Exception as e:
                 print('resolver error', e)
-
-    out = 'window.PODCAST_META = ' + json.dumps(meta, ensure_ascii=False, separators=(',', ':')) + ';\n'
-    (ROOT / 'source-metadata.js').write_text(out, encoding='utf-8')
+    (ROOT / 'source-metadata.js').write_text(
+        'window.PODCAST_META = ' + json.dumps(meta, ensure_ascii=False, separators=(',', ':')) + ';\n', encoding='utf-8')
     downloaded = len(list(COVERS.glob('pod-*.*')))
     print('wrote source-metadata.js', len(meta), 'shows; downloaded covers:', downloaded)
 
