@@ -1,0 +1,6 @@
+/* V10.1 cover-art hotfix: never show emoji/system fallback over resolved podcast artwork. */
+[hidden]{display:none!important}
+.coverFallback{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+.cover,.featureArtWrap,.nextArt{background:#0b1930!important}
+.cover img,.featureArt,.nextArt img{display:block;width:100%;height:100%;object-fit:cover;position:relative;z-index:1}
+.cover img:not([hidden]),.featureArt:not([hidden]),.nextArt img:not([hidden]){visibility:visible!important;opacity:1!important}
